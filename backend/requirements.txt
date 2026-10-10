@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+psycopg[binary]
+sqlalchemy
+geoalchemy2
+geopandas
+shapely
+pyproj
+python-dotenv
+pydantic-settings
+requests
