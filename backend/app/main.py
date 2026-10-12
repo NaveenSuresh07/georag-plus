@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import create_engine, text
 from app.config import settings
-
+from .phase1 import router as phase1_router
 app = FastAPI(title="GeoRAG+ API", version="0.1.0")
-
+app.include_router(phase1_router)
 # Setup SQLAlchemy engine using your database configuration settings
 engine = create_engine(settings.DATABASE_URL)
 
@@ -27,3 +27,4 @@ def get_study_area_summary():
             return {"status": "success", "summary": summary}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
