@@ -10,3 +10,5 @@ python-dotenv
 pydantic-settings
 requests
 osmnx
+pymupdf
+sentence-transformers

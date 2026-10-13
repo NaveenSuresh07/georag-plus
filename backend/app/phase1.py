@@ -13,6 +13,7 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import text
 
 from .db import engine
+from .rag import retrieve
 
 router = APIRouter(prefix="/phase1", tags=["phase1"])
 
@@ -233,6 +234,18 @@ def phase1_report(
 
         checks = [ec_check(conn, parcel, ec_years), wetland_check(conn, parcel)]
         duty = stamp_duty(conn, parcel, consideration_d)
+
+        # Attach statutory citations (best effort: Phase 1 must still work if RAG is unavailable)
+        wet = checks[1]
+        if wet["verdict"] != "PASS":
+            try:
+                wet["clauses"] = retrieve(
+                    "restriction on conversion or reclamation of paddy land and wetland",
+                    ["PADDY_ACT"],
+                    k=2,
+                )
+            except Exception as exc:  # noqa: BLE001
+                wet["clauses_error"] = f"{type(exc).__name__}: {exc}"
 
         for c in (*checks, duty):
             _audit(conn, parcel_id, c)
