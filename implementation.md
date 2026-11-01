@@ -32,9 +32,10 @@
    - [7.3 Safe Corridor Extraction via Dijkstra and $A^*$ (`routing_engine.py`)](#73-safe-corridor-extraction-via-dijkstra-and-a-routing_enginepy)
    - [7.4 Multi-Temporal Satellite & SAR Change Detection (`change_detection_engine.py`)](#74-multi-temporal-satellite--sar-change-detection-change_detection_enginepy)
    - [7.5 Cryptographic Tamper-Proof Audit Logging Ledger (`crypto_audit.py`)](#75-cryptographic-tamper-proof-audit-logging-ledger-crypto_auditpy)
-   - [7.6 LLM Cognitive Orchestrator & AST Spatial SQL Synthesizer (`orchestrator.py`)](#76-llm-cognitive-orchestrator--ast-spatial-sql-synthesizer-orchestratorpy)
-   - [7.7 Multi-Criteria Land Evaluation Engine (AHP) (`mce_engine.py`)](#77-multi-criteria-land-evaluation-engine-ahp-mce_enginepy)
-   - [7.8 Established 3-Phase Due Diligence & Building Rules Foundation (`phase1.py`, `phase2.py`, `phase3.py`)](#78-established-3-phase-due-diligence--building-rules-foundation)
+   - [7.6 Autonomous Natural Language Geospatial Suitability Engine (NL-GSE)](#76-autonomous-natural-language-geospatial-suitability-engine-nl-gse)
+   - [7.7 LLM Cognitive Orchestrator & AST Spatial SQL Synthesizer (`orchestrator.py`)](#77-llm-cognitive-orchestrator--ast-spatial-sql-synthesizer-orchestratorpy)
+   - [7.8 Multi-Criteria Land Evaluation Engine (AHP) (`mce_engine.py`)](#78-multi-criteria-land-evaluation-engine-ahp-mce_enginepy)
+   - [7.9 Established 3-Phase Due Diligence & Building Rules Foundation (`phase1.py`, `phase2.py`, `phase3.py`)](#79-established-3-phase-due-diligence--building-rules-foundation)
 8. [Comprehensive API Endpoint Reference](#8-comprehensive-api-endpoint-reference)
 9. [Interactive React.js GIS Dashboard Architecture](#9-interactive-reactjs-gis-dashboard-architecture)
 10. [Step-by-Step Implementation Roadmap (Batches 10 to 18)](#10-step-by-step-implementation-roadmap-batches-10-to-18)
@@ -69,6 +70,7 @@ GeoRAG+ bridges this gap by establishing an **Agentic Multi-Modal Geospatial AI 
 |---|---|---|---|
 | **High-speed semantic literature retrieval** | HNSW indexing over pgvector (Cosine distance, 384 dims) | **DONE & VERIFIED** | `db/init/02_schema.sql`, `backend/app/rag.py` |
 | **Lightning-fast cadastral parcel lookups** | R-Tree spatial indexing (GIST) in PostGIS (EPSG:4326 & UTM 43N) | **DONE & VERIFIED** | `db/init/02_schema.sql`, `backend/app/study_area.py` |
+| **Autonomous Plain-English Land & Building Suitability ("Can I build a 2-storey house on Plot X?")** | 5-Pillar Multi-Hazard & Regulatory Verification Pipeline (Wetland Act + Horn's Slope + KMBR Setbacks/Coverage + Road Width + RAG Citations) | **PARTIAL** (Individual Phase 1-3 engines verified; unified multi-parameter NL suitability engine targeted in **Batch 15**) | `backend/app/agent.py`, `backend/app/orchestrator.py` (**Batch 15**) |
 | **Terrain slope analysis via Horn's Algorithm** | Horn's 3x3 weighted finite-difference gradient operator over DEM | **PENDING** (Basic slope property exists; Horn kernel pending) | `backend/app/terrain_engine.py` (**Batch 10**) |
 | **Hydrodynamic flow-routing & flood simulation** | D8 flow direction, flow accumulation, Manning's runoff equation | **PENDING** | `backend/app/flood_engine.py` (**Batch 11**) |
 | **Safe corridor extraction & routing** | Optimized Dijkstra and $A^*$ with multi-hazard dynamic impedance | **PENDING** | `backend/app/routing_engine.py` (**Batch 12**) |
@@ -563,7 +565,88 @@ The system provides a public verification endpoint `GET /audit/verify-chain`:
 
 ---
 
-### 7.6 LLM Cognitive Orchestrator & AST Spatial SQL Synthesizer (`orchestrator.py`)
+### 7.6 Autonomous Natural Language Geospatial Suitability Engine (NL-GSE)
+
+#### Core Objective: Verified, Multi-Pillar Suitability Answers from Plain English
+The official project abstract promises:
+> *"The system allows urban planners, engineers, and municipal officials to ask complex land questions in plain English through an interactive dashboard... The main novelty of this project is using the LLM strictly as an orchestrator that writes and executes real code against spatial databases rather than guessing answers."*
+
+When an everyday citizen, municipal officer, or civil engineer asks practical queries in normal language, such as:
+- *"Can I build a 2-storey house on Plot 1?"*
+- *"Is Plot 3 suitable for a residential home?"*
+- *"Can a commercial shop or hospital be constructed on Plot 5?"*
+- *"What is the maximum permissible coverage and height for a building on Plot 42?"*
+
+Standard LLM chatbots (ChatGPT, Gemini) catastrophically fail because they hallucinate: they cannot perform Euclidean coordinate projections, do not know if the land is a gazetted wetland, and fabricate setbacks or legal clauses. 
+
+To solve this, GeoRAG+ executes an **Autonomous 5-Pillar Deterministic Multi-Hazard & Regulatory Verification Pipeline**:
+
+```mermaid
+flowchart TD
+    UserQuery["User Plain-English Query:\n'Can I build a 2-storey house on Plot 1?'"] --> EntityParser["1. NL Entity & Parameter Parser\n(Extracts: Target Plot 1, Category=Residential, Floors=2, Height=7.0m)"]
+    
+    subgraph MultiPillar [5-Pillar Multi-Hazard & Regulatory Verification Matrix]
+        EntityParser --> P1["Pillar 1: Statutory Land Legality\n(Kerala Wetland Act 2008 & Data Bank: Nilam vs Purayidom)"]
+        EntityParser --> P2["Pillar 2: Terrain & Slope Feasibility\n(Horn's Algorithm DEM Slope & KMBR Rule 26(4) Retaining Walls)"]
+        EntityParser --> P3["Pillar 3: 3D Dimensional Envelope\n(KMBR 2019 Table 4: Front, Rear, Side Setbacks & Coverage %)"]
+        EntityParser --> P4["Pillar 4: Road Access & Infrastructure\n(KMBR Table 6 Rule 50: Minimum 3.0m Road Width)"]
+        EntityParser --> P5["Pillar 5: Statutory Literature RAG\n(pgvector HNSW Cosine Similarity over Regulation Chunks)"]
+    end
+    
+    P1 & P2 & P3 & P4 & P5 --> Synthesizer["LLM Grounded Cognitive Synthesizer\n(Zero hallucination: only explains deterministic verdicts + cites exact clauses)"]
+    Synthesizer --> FinalVerdict["Structured Output:\nVerdict: PASS / FAIL / CONDITIONAL_PASS\nBuildable Area: 142.5 sqm\nMandatory Setbacks: Front 3m, Rear 2m, Side 1.2m\nStatutory Citations: KMBR Rule 23, Wetland Act Sec 3"]
+```
+
+#### Detailed 5-Pillar Verification Workflow:
+1. **Natural Language Entity & Parameter Parser:**
+   - Ingests free-form conversational queries and extracts:
+     - **Location**: Plot ID (`Plot 1`), Survey Number (`Sy 402/1`), or coordinate click.
+     - **Occupancy Category**: Residential house, commercial shop, educational, industrial (defaults to `residential` for "house/home").
+     - **Physical Scale**: Storey count (e.g., "2-storey" $\rightarrow$ `floors = 2`, `height_m = 7.0`), plinth area, basement needs.
+   
+2. **Pillar 1: Statutory Land Legality & Zoning (`phase1.py`):**
+   - Queries `cadastral_parcels` and `paddy_data_bank` for the parcel's revenue land status.
+   - If classified as `Nilam` (paddy/wetland) or located within a prohibited coastal CRZ / river buffer:
+     - **Immediate Verdict**: `FAIL` (Prohibits construction under Kerala Conservation of Paddy Land and Wetland Act 2008 Section 3).
+   - If classified as `Purayidom` (dry garden land) and free of buffer encumbrances $\rightarrow$ Proceeds to Pillar 2.
+
+3. **Pillar 2: Topographic & Slope Feasibility (`terrain_engine.py` / Batch 10):**
+   - Applies Horn’s 3x3 convolution operator over the local DEM raster to compute surface slope percentage ($\theta$).
+   - Evaluates against **KMBR 2019 Rule 26(4)**:
+     - Slope $\le 20\%$ $\rightarrow$ `PASS`.
+     - Slope $> 20\%$ ($>1:5$ gradient) $\rightarrow$ `CONDITIONAL_PASS` / `WARN` (Mandates licensed structural engineer retaining wall and terracing plan).
+     - Slope $> 45\%$ (high landslide susceptibility) $\rightarrow$ `FAIL` (Prohibits residential building permits).
+
+4. **Pillar 3: 3D Dimensional Envelope & Setback Buffers (`phase2_geom.py`):**
+   - Reprojects parcel geometry to planar metric CRS (EPSG:32643).
+   - Looks up statutory setbacks based on building category (`residential`), height ($7.0\text{m}$ for 2 storeys), and plot area from **KMBR 2019 Table 4 (Rule 23)**:
+     - Front yard setback: minimum $3.0\text{m}$.
+     - Rear yard setback: minimum $2.0\text{m}$ (or $1.5\text{m}$ for small plots under Rule 50).
+     - Side yards: minimum $1.2\text{m}$ and $1.0\text{m}$.
+   - Computes inward negative buffer $\text{ST\_Buffer}(\text{geom}, -\text{setback})$.
+   - Checks maximum permissible ground coverage (e.g., $65\%$ for residential under Rule 27). If the remaining buildable footprint is empty $\rightarrow$ `FAIL`.
+
+5. **Pillar 4: Road Access & Infrastructure Capacity (`phase2.py` / `phase3.py`):**
+   - Computes nearest public road frontage and access street width:
+     - Residential up to 2 storeys / 300 sqm: requires minimum **$3.0\text{m}$ access road width** (KMBR Table 6 Rule 50).
+     - Commercial or high-occupancy buildings: requires $\ge 5.0\text{m}$ or $\ge 7.0\text{m}$ access width.
+     - If road width $< \text{threshold}$ $\rightarrow$ `FAIL` or `WARN` (Access road width violation).
+
+6. **Pillar 5: Statutory Literature RAG Grounding (`rag.py`):**
+   - Queries pgvector HNSW index for exact matching gazetted sub-rules and gazette notifications corresponding to the violated or passed checks.
+   - Generates verified citations: e.g., `KMBR 2019 Rule 23 Table 4 (p. 38)`, `Kerala Conservation of Paddy Land and Wetland Act 2008 Section 3 (p. 4)`.
+
+#### Ground-Truth Benchmark Queries:
+| Test Natural Language Query | Target Plot | Expected Verdict | Dominant Governing Factor | Cited Statutory Regulation |
+| :--- | :---: | :---: | :--- | :--- |
+| *"Can I build a 2-storey house on Plot 1?"* | Plot 1 | **`PASS`** | Purayidom, road 3.6m, 2 floors fit with 55% coverage | KMBR 2019 Rule 23 Table 4 |
+| *"Is Plot 3 suitable for a residential home?"* | Plot 3 | **`FAIL`** | Categorized as Nilam (paddy field in Data Bank) | Kerala Wetland Act 2008 Sec 3 |
+| *"Can I construct a 3-storey house on Plot 42?"* | Plot 42 | **`CONDITIONAL_PASS`** | Slope $= 24\%$ ($>20\%$), requires certified retaining wall | KMBR 2019 Rule 26(4) |
+| *"Can I build a commercial shop on Plot 2?"* | Plot 2 | **`FAIL`** | Access road is $2.4\text{m}$ (requires $\ge 5.0\text{m}$ for commercial) | KMBR Rule 50 Table 6 |
+
+---
+
+### 7.7 LLM Cognitive Orchestrator & AST Spatial SQL Synthesizer (`orchestrator.py`)
 
 #### Dynamic Spatial SQL Generation with Strict AST Sandboxing
 Rather than relying on static pre-written endpoints for every possible spatial question, GeoRAG+ empowers the LLM to act as a **Cognitive Orchestrator**:
@@ -587,7 +670,7 @@ flowchart LR
 
 ---
 
-### 7.7 Multi-Criteria Land Evaluation Engine (AHP) (`mce_engine.py`)
+### 7.8 Multi-Criteria Land Evaluation Engine (AHP) (`mce_engine.py`)
 
 #### Analytic Hierarchy Process (AHP) Decision Model
 Urban planners evaluate land suitability for development by synthesizing conflicting spatial criteria. GeoRAG+ implements Thomas Saaty’s Analytic Hierarchy Process (AHP):
@@ -622,7 +705,7 @@ Urban planners evaluate land suitability for development by synthesizing conflic
 
 ---
 
-### 7.8 Established 3-Phase Due Diligence & Building Rules Foundation
+### 7.9 Established 3-Phase Due Diligence & Building Rules Foundation
 
 *(Batches 1 to 9: 100% Implemented & Verified with 69 Tests Passing)*
 - **Phase 1 (`phase1.py`):** 30-year Encumbrance Certificate (EC) mortgage/lien audit, Paddy Data Bank spatial overlap detection, and 8% Stamp Duty + 2% Registration Fee calculation.
@@ -646,6 +729,7 @@ Urban planners evaluate land suitability for development by synthesizing conflic
 | `GET` | `/phase3/{parcel_id}` | Phase 3 | OC, door `UA-`, arrears, TDS, capital gains | `sale_price`, `acq_cost`, `date` |
 | `GET` | `/rag/search` | RAG | Hybrid pgvector + full-text statutory search | `q`, `k`, `doc_code` |
 | `POST`| `/agent/query` | Agent | AI Legal Explainer query router | Body: `AgentQueryRequest` |
+| **`POST`**| **`/agent/suitability`** | **Batch 15** | **Autonomous 5-Pillar Plain-English Land & Building Suitability Engine** | Body: `AgentQueryRequest` |
 | **`GET`** | **`/terrain/slope-grid`** | **Batch 10** | **Horn's 3x3 slope, aspect & hillshade grid** | `bbox`, `resolution_m` |
 | **`GET`** | **`/terrain/parcel/{parcel_id}`**| **Batch 10** | **Detailed Horn slope metrics for a parcel** | `parcel_id` |
 | **`POST`**| **`/flood/simulate`** | **Batch 11** | **Execute dynamic hydrodynamic flood simulation** | Body: `intensity_mm_hr`, `duration` |
@@ -756,12 +840,34 @@ App.jsx (Master Dashboard State & Split View)
 
 ---
 
-### Batch 15: LLM Cognitive Orchestrator & AHP MCE Engine
-1. **Core Engines:**
-   - Implement `backend/app/orchestrator.py`: LLM agent that receives arbitrary natural language questions, drafts parameterized PostGIS SQL queries, passes them through a strict AST read-only safety sandbox, executes against database, and synthesizes answers with citations.
-   - Implement `backend/app/mce_engine.py`: Thomas Saaty Analytic Hierarchy Process (AHP) evaluating consistency ratio ($CR < 0.10$) and computing multi-criteria land suitability scores across slope, flood risk, road access, and legal tenure.
-2. **FastAPI Endpoints:** Mount `POST /orchestrator/query` and `POST /mce/evaluate`.
-3. **Unit Verification:** Implement `tests/test_orchestrator_ast.py` verifying that destructive SQL statements (`DROP TABLE`, `DELETE`) are blocked and AHP weights sum to 1.0.
+### Batch 15: LLM Cognitive Orchestrator, Autonomous NL Suitability Engine (NL-GSE) & AHP MCE Engine
+1. **Autonomous NL Geospatial Suitability Engine (`backend/app/agent.py` & `suitability_engine.py`):**
+   - Natural language entity & parameter extractor parsing queries (*"Can I build a 2-storey house on Plot 1?"*, *"Is Plot 3 suitable for a home?"*):
+     - Extracts building category (`residential`, `commercial`, `industrial`).
+     - Extracts physical scale: "2-storey" / "two floors" $\rightarrow$ `floors = 2`, `height_m = 7.0`, plinth footprint.
+     - Resolves plot target via ID, survey number, or spatial coordinate centroid.
+   - Executes the **5-Pillar Multi-Hazard & Regulatory Verification Pipeline**:
+     - *Pillar 1:* Paddy Land & Wetland Act 2008 & Data Bank screening (`Nilam` vs `Purayidom`).
+     - *Pillar 2:* Horn’s 3x3 DEM slope gradient and KMBR Rule 26(4) retaining wall / stability mandates.
+     - *Pillar 3:* Planar metric setback buffers (KMBR 2019 Table 4) and maximum allowable ground coverage %.
+     - *Pillar 4:* Access street width verification (KMBR Rule 50 Table 6 minimum $3.0\text{m}$ for residential).
+     - *Pillar 5:* Statutory RAG clause injection from `regulation_chunks` via pgvector HNSW.
+   - Outputs structured, verified verdicts: `PASS`, `FAIL`, or `CONDITIONAL_PASS` with zero hallucinations and exact statutory citations.
+2. **AST-Sandboxed Dynamic Spatial SQL Synthesizer (`backend/app/orchestrator.py`):**
+   - Enables LLM to act as a Cognitive Orchestrator for open-ended spatial analysis (*"Find all vacant plots within 500m of the hospital with slope < 15%"*).
+   - Generates PostGIS SQL dynamically and validates through a strict AST read-only safety sandbox (`sqlglot`): non-`SELECT` statements are strictly blocked, access is restricted to whitelisted schema, with `LIMIT 500` and statement timeouts.
+3. **Analytic Hierarchy Process (AHP) MCE Engine (`backend/app/mce_engine.py`):**
+   - Implements Thomas Saaty Analytic Hierarchy Process (AHP) evaluating consistency ratio ($CR < 0.10$).
+   - Computes multi-criteria land suitability scores across slope, flood risk, road access, and legal tenure.
+4. **FastAPI Endpoints:**
+   - Mount `POST /agent/suitability`: Dedicated conversational suitability endpoint.
+   - Mount `POST /orchestrator/query`: Arbitrary spatial SQL NL analytics.
+   - Mount `POST /mce/evaluate`: Multi-criteria weighted suitability ranking.
+5. **Unit & Regression Verification (`tests/test_agent_suitability_flow.py`):**
+   - Verifies canonical query: *"Can I build a 2-storey house on Plot 1?"* $\rightarrow$ Asserts `PASS`, 55% coverage, front setback 3m, road 3.6m.
+   - Verifies canonical query: *"Is Plot 3 suitable for a house?"* $\rightarrow$ Asserts `FAIL` due to protected Wetland Act 2008 status.
+   - Verifies canonical query: *"Can I construct a 3-storey building on Plot 42?"* $\rightarrow$ Asserts `CONDITIONAL_PASS` / `WARN` due to $24\%$ slope requiring Rule 26(4) retaining wall.
+   - Verifies AST sandbox blocks destructive SQL statements (`DROP TABLE`, `DELETE`).
 
 ---
 
