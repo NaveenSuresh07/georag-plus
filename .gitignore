@@ -1,5 +1,30 @@
+# Environment variables
 .env
-.venv/
+*.env
+
+# Python
 __pycache__/
-data/raw/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+backend/.pytest_cache/
+backend/.venv/
+
+# Frontend / Node
 node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.vite-temp/
+
+# Large binaries & cache
+*.osm.pbf
+cache/
+data/raw/
+data/processed/
+
+# System files
+.DS_Store
+Thumbs.db

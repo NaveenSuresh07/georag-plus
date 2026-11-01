@@ -1,32 +1,40 @@
-from fastapi import FastAPI, HTTPException
-from sqlalchemy import create_engine, text
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import create_engine
 from app.config import settings
 from .phase1 import router as phase1_router
 from .rag import router as rag_router
-app = FastAPI(title="GeoRAG+ API", version="0.1.0")
-app.include_router(rag_router)
+from .phase2 import router as phase2_router
+from .phase3 import router as phase3_router
+from .agent import router as agent_router
+from .study_area import router as study_area_router
+
+app = FastAPI(
+    title="GeoRAG+ API",
+    version="0.2.0",
+    description="Automated Land Due Diligence, Building Rules Compliance, and Property Selling Verification Assistant for Kerala",
+)
+
+# Enable CORS for frontend Vite development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(study_area_router)
 app.include_router(phase1_router)
-# Setup SQLAlchemy engine using your database configuration settings
+app.include_router(phase2_router)
+app.include_router(phase3_router)
+app.include_router(agent_router)
+app.include_router(rag_router)
+
 engine = create_engine(settings.DATABASE_URL)
 
 @app.get("/health")
 def health():
     return "ok"
 
-@app.get("/study-area/summary")
-def get_study_area_summary():
-    try:
-        with engine.connect() as conn:
-            # Query row counts or summary details of your spatial layers
-            result = conn.execute(text("""
-                SELECT 'study_area_buildings' AS table_name, count(*) AS count FROM study_area_buildings
-                UNION ALL
-                SELECT 'roads', count(*) FROM roads
-                UNION ALL
-                SELECT 'crz_zones', count(*) FROM crz_zones;
-            """))
-            summary = [{"table": row[0], "count": row[1]} for row in result]
-            return {"status": "success", "summary": summary}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
     

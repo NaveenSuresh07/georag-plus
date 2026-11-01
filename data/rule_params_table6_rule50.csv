@@ -1,0 +1,17 @@
+doc_code,clause_ref,table_ref,use_group,category,param,height_min_m,height_max_m,plot_min_sqm,plot_max_sqm,builtup_min_sqm,builtup_max_sqm,road_class,value,unit,verified,proviso,note
+KPBR,Rule 27,Table 6,A1,I,max_plot_coverage_pct,,,,,,,,65,percent,yes,,"Table 6 (PDF page 53), A1, coverage Category I. Checked against the PDF"
+KPBR,Rule 27,Table 6,A1,II,max_plot_coverage_pct,,,,,,,,60,percent,yes,,"Table 6 (PDF page 53), A1, coverage Category II. Checked against the PDF"
+KPBR,Rule 27,Table 6,A2,I,max_plot_coverage_pct,,,,,,,,65,percent,yes,,"Table 6 (PDF page 53), A2, coverage Category I. Checked against the PDF"
+KPBR,Rule 27,Table 6,A2,II,max_plot_coverage_pct,,,,,,,,55,percent,yes,,"Table 6 (PDF page 53), A2, coverage Category II. Checked against the PDF"
+KPBR,Rule 27,Table 6,A1,I,max_far,,,,,,,,3,ratio,yes,,"Table 6, A1, FSI Category I without additional fee. Checked against the PDF"
+KPBR,Rule 27,Table 6,A1,II,max_far,,,,,,,,2.5,ratio,yes,,"Table 6, A1, FSI Category II without additional fee. Checked against the PDF"
+KPBR,Rule 27,Table 6,A2,I,max_far,,,,,,,,2.5,ratio,yes,,"Table 6, A2, FSI Category I without additional fee. Checked against the PDF"
+KPBR,Rule 27,Table 6,A2,II,max_far,,,,,,,,1.5,ratio,yes,,"Table 6, A2, FSI Category II without additional fee. Checked against the PDF"
+KPBR,Rule 27,Table 6,A1,I,max_far_with_fee,,,,,,,,4,ratio,yes,,"Table 6, A1, FSI Category I with additional fee. Checked against the PDF"
+KPBR,Rule 27,Table 6,A1,II,max_far_with_fee,,,,,,,,,ratio,no,,"Table 6, A1, FSI Category II with additional fee. The cell is BLANK in the PDF: no with-fee tier"
+KPBR,Rule 27,Table 6,A2,I,max_far_with_fee,,,,,,,,4,ratio,yes,,"Table 6, A2, FSI Category I with additional fee. Checked against the PDF"
+KPBR,Rule 27,Table 6,A2,II,max_far_with_fee,,,,,,,,2.25,ratio,yes,,"Table 6, A2, FSI Category II with additional fee. Checked against the PDF"
+KPBR,Rule 27,Table 6,,,far_extra_fee_per_sqm,,,,,,,,5000,INR per sq m,yes,,Table 6 header: additional fee of Rs 5000 per sq. metre for the additional area. Checked against the PDF
+KPBR,Rule 50,,A1,,exempt_coverage_far,,,,125,,,,1,flag,yes,,"Rule 50(3): FSI and coverage do not apply to buildings under this chapter (Group A1 and/or F, plots not exceeding 125 sq m). Checked against the PDF"
+KPBR,Rule 50,,A1,,max_floors,,,,125,,,,3,floors,yes,,"Rule 50(2): 3 floors and a stair-room (Group A1 and/or F, plots not exceeding 125 sq m). Checked against the PDF"
+KPBR,Rule 50,,A1,,max_height_m,,,,125,,,,10,m,yes,,"Rule 50(2): height at most 10 m excluding the stair-room (Group A1 and/or F, plots not exceeding 125 sq m). Checked against the PDF"

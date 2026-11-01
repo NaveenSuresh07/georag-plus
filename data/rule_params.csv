@@ -1,0 +1,19 @@
+doc_code,clause_ref,table_ref,use_group,param,height_min_m,height_max_m,plot_min_sqm,plot_max_sqm,builtup_min_sqm,builtup_max_sqm,road_class,value,unit,verified,note
+KPBR,Rule 26,Table 4,A1,front_setback_min,,,,,,,,3,m,no,"DRAFT read from the screenshot: column (2) Groups A1 & A2 any built-up area. Check against the PDF"
+KPBR,Rule 26,Table 4,A1,rear_setback_min,,,,,,,,1.5,m,no,"DRAFT column (2)"
+KPBR,Rule 26,Table 4,A1,side_setback_min,,,,,,,,1,m,no,"DRAFT column (2)"
+KPBR,Rule 26,Table 4,A2,front_setback_min,,,,,,,,3,m,no,"DRAFT column (2)"
+KPBR,Rule 26,Table 4,A2,rear_setback_min,,,,,,,,1.5,m,no,"DRAFT column (2)"
+KPBR,Rule 26,Table 4,A2,side_setback_min,,,,,,,,1,m,no,"DRAFT column (2)"
+KPBR,Rule 26,Table 4,A1,front_setback_min,,,,125,,200,,2,m,no,"DRAFT column (3): small plots, plot area up to 125 sq m AND built-up area up to 200 sq m"
+KPBR,Rule 26,Table 4,A1,rear_setback_min,,,,125,,200,,1,m,no,"DRAFT column (3)"
+KPBR,Rule 26,Table 4,A1,side_setback_min,,,,125,,200,,0.6,m,no,"DRAFT column (3)"
+KPBR,,,A1,max_plot_coverage_pct,,,,,,,,,percent,no,"find the rule: look for 'coverage' (see the SQL search in the chat). Leave value empty if KPBR has no such limit"
+KPBR,,,A1,max_far,,,,,,,,,ratio,no,"find the rule: 'floor area ratio', 'F.A.R' or 'floor space index'. Leave empty if none"
+KPBR,,,,road_centre_min,,,,,,,,,m,no,"only if a rule gives a distance from the road centre line"
+KMBR,,,A1,front_setback_min,,,,,,,,,m,no,"same Table 4 idea in the municipality rules"
+KMBR,,,A1,rear_setback_min,,,,,,,,,m,no,
+KMBR,,,A1,side_setback_min,,,,,,,,,m,no,
+KMBR,,,A1,max_plot_coverage_pct,,,,,,,,,percent,no,
+KMBR,,,A1,max_far,,,,,,,,,ratio,no,
+KMBR,,,,road_centre_min,,,,,,,,,m,no,

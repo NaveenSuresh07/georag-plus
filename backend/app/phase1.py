@@ -228,10 +228,15 @@ def phase1_report(
     consideration: float | None = Query(None, description="Declared sale price in INR"),
     ec_years: int = Query(30, ge=1, le=60, description="EC look-back period in years"),
 ):
+    if not isinstance(ec_years, int):
+        ec_years = 30
+    if isinstance(consideration, (int, float, Decimal)):
+        consideration_d = Decimal(str(consideration))
+    else:
+        consideration_d = None
+
     with engine.begin() as conn:
         parcel = _get_parcel(conn, parcel_id)
-        consideration_d = Decimal(str(consideration)) if consideration else None
-
         checks = [ec_check(conn, parcel, ec_years), wetland_check(conn, parcel)]
         duty = stamp_duty(conn, parcel, consideration_d)
 

@@ -12,7 +12,7 @@ BEGIN;
 -- Pick a spot that has plenty of buildings in study_area_buildings.
 DELETE FROM study_area;
 INSERT INTO study_area (name, local_body_type, geom)
-VALUES ('Attingal Study Ward', 'panchayat',
+VALUES ('Attingal Study Ward', 'municipality',
         ST_MakeEnvelope(76.810, 8.690, 76.819, 8.699, 4326));
 
 -- 2. PADDY DATA BANK (proxy) -----------------------------------------------

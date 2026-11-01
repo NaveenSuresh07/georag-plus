@@ -44,6 +44,45 @@ def docs_for(local_body_type: str) -> list[str]:
         return [r[0] for r in rows]
 
 
+def clause_text(doc_code: str, clause_ref: str, limit: int = 2, contains: str | None = None) -> list[dict]:
+    """The text of ONE exact clause (no similarity search): used to cite the rule a number came from."""
+    where_extra = ""
+    params: dict = {"d": doc_code, "c": clause_ref, "n": limit}
+    if contains:
+        where_extra = "AND content ILIKE :contains "
+        params["contains"] = f"%{contains}%"
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                f"SELECT chunk_id, doc_code, doc_title, clause_ref, page_start, content "
+                f"FROM regulation_chunks WHERE doc_code = :d AND clause_ref = :c {where_extra}"
+                f"ORDER BY chunk_index LIMIT :n"
+            ),
+            params,
+        ).mappings().all()
+        if not rows and contains:
+            rows = conn.execute(
+                text(
+                    "SELECT chunk_id, doc_code, doc_title, clause_ref, page_start, content "
+                    "FROM regulation_chunks WHERE doc_code = :d AND clause_ref = :c "
+                    "ORDER BY chunk_index LIMIT :n"
+                ),
+                {"d": doc_code, "c": clause_ref, "n": limit},
+            ).mappings().all()
+    return [
+        {
+            "chunk_id": r["chunk_id"],
+            "doc_code": r["doc_code"],
+            "doc_title": r["doc_title"],
+            "clause_ref": r["clause_ref"],
+            "page": r["page_start"],
+            "text": r["content"][:1500],
+            "match": "exact clause",
+        }
+        for r in rows
+    ]
+
+
 def retrieve(query: str, doc_codes: list[str] | None = None, k: int = 5, pool: int = 20) -> list[dict]:
     qv = _vec_literal(_model().encode(query, normalize_embeddings=True))
 
@@ -121,6 +160,15 @@ def list_docs():
             )
         ).mappings().all()
     return [dict(r) for r in rows]
+
+
+@router.get("/clause")
+def get_clause(
+    doc: str = Query(..., description="doc_code, e.g. KPBR"),
+    ref: str = Query(..., description="clause label, e.g. 'Rule 26'"),
+):
+    """Show the stored text of one exact clause (handy for checking a citation against the PDF)."""
+    return {"doc": doc, "ref": ref, "chunks": clause_text(doc, ref, limit=10)}
 
 
 @router.get("/search")
